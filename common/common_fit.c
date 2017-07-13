@@ -48,7 +48,7 @@ int fit_select_fdt(const void *fdt, int images, int *fdt_offsetp)
 		}
 		if (board_fit_config_name_match(name))
 			continue;
-
+		
 		debug("Selecting config '%s'", name);
 		fdt_name = fdt_getprop(fdt, node, FIT_FDT_PROP, &len);
 		if (!fdt_name) {

@@ -16,6 +16,7 @@
 #include <mmc.h>
 #include <image.h>
 
+
 DECLARE_GLOBAL_DATA_PTR;
 
 static int mmc_load_legacy(struct spl_image_info *spl_image, struct mmc *mmc,
@@ -318,7 +319,6 @@ int spl_mmc_load_image(struct spl_image_info *spl_image,
 			if (!err)
 				return err;
 		}
-
 		err = mmc_load_image_raw_partition(spl_image, mmc,
 			CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_PARTITION);
 		if (!err)

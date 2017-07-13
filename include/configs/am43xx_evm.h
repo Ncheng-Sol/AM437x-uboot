@@ -187,7 +187,8 @@
 	DEFAULT_MMC_TI_ARGS \
 	DEFAULT_FIT_TI_ARGS \
 	"fdtfile=undefined\0" \
-	"bootpart=0:2\0" \
+	"bootpart=0:1\0" \
+	"rootfspart=0:2\0"\
 	"bootdir=/boot\0" \
 	"bootfile=zImage\0" \
 	"console=ttyO0,115200n8\0" \
@@ -231,7 +232,7 @@
 		"fi\0" \
 		"fi;" \
 		"usb stop ${usbdev};\0" \
-	"findfdt="\
+/*	"findfdt="\
 		"if test $board_name = AM43EPOS; then " \
 			"setenv fdtfile am43x-epos-evm.dtb; fi; " \
 		"if test $board_name = AM43__GP; then " \
@@ -243,7 +244,8 @@
 		"if test $board_name = AM43_IDK; then " \
 			"setenv fdtfile am437x-idk-evm.dtb; fi; " \
 		"if test $fdtfile = undefined; then " \
-			"echo WARNING: Could not determine device tree; fi; \0" \
+			"echo WARNING: Could not determine device tree; fi; \0" \*/\
+	"findfdt=setenv fdtfile hc6120.dtb \0"\
 	NANDARGS \
 	NETARGS \
 	DFUARGS \

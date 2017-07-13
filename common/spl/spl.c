@@ -231,16 +231,16 @@ int spl_init(void)
 			return ret;
 		}
 	}
-/*
+
 	if (IS_ENABLED(CONFIG_SPL_DM)) {
-		/* With CONFIG_OF_PLATDATA, bring in all devices *//*
+		/* With CONFIG_OF_PLATDATA, bring in all devices */
 		ret = dm_init_and_scan(!CONFIG_IS_ENABLED(OF_PLATDATA));
 		if (ret) {
 			debug("dm_init_and_scan() returned error %d\n", ret);
 			return ret;
 		}
 	}
-*/
+
 	gd->flags |= GD_FLG_SPL_INIT;
 
 	return 0;
@@ -341,6 +341,20 @@ __weak void dram_init_banksize(void)
 
 #endif
 
+static void show_led(){
+	
+	volatile unsigned int *led = (unsigned int *)0x44E10A58;	// GPIO MUX 
+	volatile unsigned int *gpio_5_om = (unsigned int *)0x48322134;	// GPIO input/output select
+	volatile unsigned int *gpio_5_data = (unsigned int *)0x4832213C;	// GPIO5 dataout reg
+	unsigned int old = *led;
+	old |= (0x7 << 0);		// 设置为GPIO5_6模式 <mode7>
+	old |= (0x2 << 16);
+	*led = old;		
+	*gpio_5_om = 0x00000000;		// set the gpio5 all pin work in output mode
+	*gpio_5_data = 0x00000040;		// set the gpio5_6 output higt level
+	
+} 
+
 void board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	u32 spl_boot_list[] = {
@@ -353,6 +367,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	struct spl_image_info spl_image;
 	debug(">>spl:board_init_r()\n");
 	gd->bd = &bdata;
+	show_led();
 
 #if !(defined(CONFIG_SYS_ICACHE_OFF) && defined(CONFIG_SYS_DCACHE_OFF)) && \
 		defined(CONFIG_ARM)
@@ -361,18 +376,6 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	enable_caches();
 #endif
 
-	volatile unsigned int *led = (unsigned int *)0x44E10A58;	// GPIO MUX 
-	volatile unsigned int *gpio_5_om = (unsigned int *)0x48322134;	// GPIO input/output select
-	volatile unsigned int *gpio_5_data = (unsigned int *)0x4832213C;	// GPIO5 dataout reg
-	unsigned int old = *led;
-	old |= (0x7 << 0);		// 设置为GPIO5_6模式 <mode7>
-	old |= (0x2 << 16);
-	*led = old;		
-	*gpio_5_om = 0x00000000;		// set the gpio5 all pin work in output mode
-	*gpio_5_data = 0x00000040;		// set the gpio5_6 output higt level
-	//while(1);
-
-//#undef CONFIG_SYS_SPL_MALLOC_START
 #if defined(CONFIG_SYS_SPL_MALLOC_START)
 	mem_malloc_init(CONFIG_SYS_SPL_MALLOC_START,
 			CONFIG_SYS_SPL_MALLOC_SIZE);
